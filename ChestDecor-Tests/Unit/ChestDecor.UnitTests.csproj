@@ -1,0 +1,8 @@
+<Project Sdk="Microsoft.NET.Sdk">
+  <!-- Unit tests: pure logic, no game running. Logic worth testing lives in classes without Unity / Valheim types; link those files here
+       (<Compile Include="..\..\ChestDecor-Mod\src\...\X.cs" Link="Mod\X.cs" />) or reach them in the built DLL through ModAssembly. -->
+  <PropertyGroup>
+    <AssemblyName>ChestDecor.UnitTests</AssemblyName>
+    <RootNamespace>ChestDecor.Tests.Unit</RootNamespace>
+  </PropertyGroup>
+</Project>

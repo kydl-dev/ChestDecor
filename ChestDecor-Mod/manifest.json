@@ -1,0 +1,10 @@
+{
+  "name": "ChestDecor",
+  "version_number": "0.1.0",
+  "website_url": "",
+  "description": "Decorate your chests: colour them, attach trophies, food, produce, weapons, furniture, lights and KY-Items, then move, rotate and resize each item. Cosmetic only. Paid materials are refunded on removal.",
+  "dependencies": [
+    "denikson-BepInExPack_Valheim-5.4.2202",
+    "ValheimModding-Jotunn-2.30.2"
+  ]
+}
