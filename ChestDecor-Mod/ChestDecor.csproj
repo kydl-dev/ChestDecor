@@ -1,4 +1,4 @@
-<Project Sdk="Microsoft.NET.Sdk">
+﻿<Project Sdk="Microsoft.NET.Sdk">
   <!--
     ChestDecor mod. Everything shared by the user's mods (references from E:\Projects\Valheim\Claude\ref, net48, no debug symbols,
     the shared code Kydl.Common / Kydl.Ui, copy to Assets + build, embedded bundle) comes from Claude\shared\Kydl.Mod.props / .targets.
@@ -18,6 +18,11 @@
   <ItemGroup>
     <!-- the mod's menu views live in the Unity project (previewed there) and are compiled into the mod from there -->
     <Compile Include="..\ChestDecor-Unity\Assets\ChestDecor_UI\Runtime\*.cs" Link="UiViews\%(Filename)%(Extension)" />
+  </ItemGroup>
+
+  <ItemGroup>
+    <!-- ChestDecor only: Texture2D.EncodeToPNG for the DumpTextures dev option (ZoneMap) -->
+    <Reference Include="UnityEngine.ImageConversionModule"><HintPath>$(ValheimRefs)\UnityEngine.ImageConversionModule.dll</HintPath><Private>false</Private></Reference>
   </ItemGroup>
 
   <Import Project="..\..\Claude\shared\Kydl.Mod.targets" />
