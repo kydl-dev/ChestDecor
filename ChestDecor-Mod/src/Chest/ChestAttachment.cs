@@ -2,6 +2,7 @@ using System;
 using System.Collections.Generic;
 using System.Globalization;
 using System.Text;
+using Kydl.Common;
 using UnityEngine;
 
 namespace ChestDecor
@@ -110,9 +111,11 @@ namespace ChestDecor
             foreach (var part in text.Split(','))
             {
                 var colon = part.LastIndexOf(':');
+                // Stryker disable once Equality : a colon at 0 gives an empty name, which the next check drops as well
                 if (colon <= 0) continue;
 
                 var name = Uri.UnescapeDataString(part.Substring(0, colon));
+                // Stryker disable once all : safety net - after the colon check the escaped name is never empty
                 if (name.Length == 0) continue;
 
                 if (!int.TryParse(part.Substring(colon + 1), NumberStyles.Integer, CultureInfo.InvariantCulture, out var amount) || amount <= 0)
@@ -135,22 +138,25 @@ namespace ChestDecor
 
             foreach (var entry in data.Split(';'))
             {
-                if (result.Count >= max) break;
+                if (result.Count >= max) { ModLog.Verbose("ChestAttachment.Parse: more than " + max + " stored attachments, the rest is not loaded"); break; }
 
                 var f = entry.Split('|');
-                if (f.Length < 8 || f[0].Length == 0) continue;
+                // Stryker disable once all : 'entry.Length > 0' only keeps an empty entry (trailing ';') out of the debug log
+                if (f.Length < 8 || f[0].Length == 0) { if (entry.Length > 0) ModLog.Verbose("ChestAttachment.Parse: entry '" + entry + "' skipped (too few fields or no prefab)"); continue; }
 
-                if (!Read(f[1], out var px) || !Read(f[2], out var py) || !Read(f[3], out var pz) ||
-                    !Read(f[4], out var rx) || !Read(f[5], out var ry) || !Read(f[6], out var rz) ||
-                    !Read(f[7], out var s))
-                    continue;
+                // px py pz rx ry rz scale. A loop instead of seven 'out var' in one condition: same result, and Stryker can mutate it
+                // (with the chained 'out var' every mutation failed to compile, so this save format was not mutation-tested; 2026-10-26)
+                var v = new float[7];
+                var readable = true;
+                for (int i = 0; i < v.Length && readable; i++) readable = Read(f[i + 1], out v[i]);
+                if (!readable) { ModLog.Verbose("ChestAttachment.Parse: entry '" + entry + "' skipped (a position, angle or scale is not a finite number)"); continue; }
 
                 result.Add(new ChestAttachment
                 {
                     Prefab = f[0],
-                    Position = new Vector3(px, py, pz),
-                    Euler = new Vector3(rx, ry, rz),
-                    Scale = Mathf.Clamp(s, MinScale, MaxScale),
+                    Position = new Vector3(v[0], v[1], v[2]),
+                    Euler = new Vector3(v[3], v[4], v[5]),
+                    Scale = Mathf.Clamp(v[6], MinScale, MaxScale),
                     Paid = f.Length < 9 || f[8] != "0",   // saves from before the paid flag count as paid
                     Cost = f.Length >= 10 ? ParseCost(f[9]) : null   // saves from before the cost was stored have none
                 });

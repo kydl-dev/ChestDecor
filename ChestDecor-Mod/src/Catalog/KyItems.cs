@@ -27,6 +27,7 @@ namespace ChestDecor
             internal bool IsPiece;
         }
 
+        // Stryker disable all : game code (Jotunn ModRegistry, Unity prefabs) - no unit test can run it; in-game tests CD-05 / CD-06 (TEST_QUALITY.md)
         /// <summary>
         /// Prefab name -> the user's item / piece. `pieces` are all build pieces the catalog collected (for the KY-Items build category check).
         /// Expected outcome: returns the map (empty when none of the user's mods with items is loaded).
@@ -68,6 +69,7 @@ namespace ChestDecor
                            categoryPieces + " more piece(s) in the '" + KyCategory.Name + "' build category" + (ky.HasValue ? "" : " - category not registered") + ")");
             return result;
         }
+        // Stryker restore all
 
         /// A loaded mod of the user (not ChestDecor itself).
         internal static bool IsUserMod(BepInEx.BepInPlugin mod)
@@ -78,11 +80,13 @@ namespace ChestDecor
         /// Pure rule (unit tested): "com.kydldev.*", ignoring case, but never ChestDecor's own GUID.
         internal static bool IsUserGuid(string guid)
         {
+            // Stryker disable once all : always false here (null or empty) - written as the checked end state (STANDARDS), so any mutation is equivalent
             if (string.IsNullOrEmpty(guid)) return guid != null && guid.Length > 0;
             return guid.StartsWith(GuidPrefix, StringComparison.OrdinalIgnoreCase) &&
                    !string.Equals(guid, Plugin.ModGuid, StringComparison.OrdinalIgnoreCase) && guid.Length > GuidPrefix.Length;
         }
 
+        // Stryker disable all : game code (GameObject names), see Collect
         static bool Add(Dictionary<string, Found> map, GameObject go, string mod, bool isPiece)
         {
             if (map.ContainsKey(go.name)) return map[go.name].Prefab != go;

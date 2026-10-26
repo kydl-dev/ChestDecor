@@ -1,8 +1,13 @@
 <Project Sdk="Microsoft.NET.Sdk">
   <!-- Unit tests: pure logic, no game running. Logic worth testing lives in classes without Unity / Valheim types; link those files here
-       (<Compile Include="..\..\ChestDecor-Mod\src\...\X.cs" Link="Mod\X.cs" />) or reach them in the built DLL through ModAssembly. -->
+       (<Compile Include="..\..\ChestDecor-Mod\src\...\X.cs" Link="Mod\X.cs" />) or reach them in the built DLL through ModAssembly.
+       Unity's plain value types (Vector3, Bounds, Mathf, Color) are managed code and work here; anything that calls into the engine
+       (ColorUtility.TryParseHtmlString, GameObject, ...) does not - test that in game (InGameTests). -->
   <PropertyGroup>
     <AssemblyName>ChestDecor.UnitTests</AssemblyName>
     <RootNamespace>ChestDecor.Tests.Unit</RootNamespace>
   </PropertyGroup>
+  <ItemGroup>
+    <Reference Include="UnityEngine.CoreModule"><HintPath>$(ValheimRefs)\UnityEngine.CoreModule.dll</HintPath><Private>true</Private></Reference>
+  </ItemGroup>
 </Project>

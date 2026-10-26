@@ -69,6 +69,14 @@ namespace ChestDecor.Tests
             return f.GetValue(null);
         }
 
+        public static object GetStaticProperty(string typeName, string property)
+        {
+            var p = Type(typeName).GetProperty(property, All);
+            if (p == null) throw new MissingMemberException(typeName, property);
+            try { return p.GetValue(null); }
+            catch (TargetInvocationException e) { throw e.InnerException ?? e; }
+        }
+
         public static void SetStatic(string typeName, string field, object value)
         {
             var f = Type(typeName).GetField(field, All);

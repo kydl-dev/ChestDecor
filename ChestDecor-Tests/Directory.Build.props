@@ -25,6 +25,9 @@
     <PackageReference Include="NUnit" Version="4.3.2" />
     <PackageReference Include="NUnit3TestAdapter" Version="5.0.0" />
     <PackageReference Include="NUnit.Analyzers" Version="4.7.0" />
+    <!-- property-based tests (Claude\testing\TEST_QUALITY.md): FsCheck generates hundreds of inputs per rule and shrinks a failure to the
+         smallest case. Use through Common\Props.cs (Props.Check). 2.16.6 (2.x C# API, runs on net48). -->
+    <PackageReference Include="FsCheck" Version="2.16.6" />
   </ItemGroup>
 
   <ItemGroup>
@@ -33,4 +36,11 @@
     <Reference Include="BepInEx"><HintPath>$(ValheimRefs)\BepInEx.dll</HintPath><Private>true</Private></Reference>
     <Reference Include="System.Web.Extensions" />
   </ItemGroup>
+
+  <!-- Test-quality runs only (KydlQuality=true, set by _agent\tools\test-quality.ps1; Claude\testing\TEST_QUALITY.md): the mod project is a
+       reference so Stryker.NET finds the code to mutate. Normal test runs keep using the built DLL in <Mod>-Mod\build. -->
+  <ItemGroup Condition="'$(KydlQuality)' == 'true'">
+    <ProjectReference Include="$(MSBuildThisFileDirectory)..\*-Mod\*.csproj" />
+  </ItemGroup>
+
 </Project>

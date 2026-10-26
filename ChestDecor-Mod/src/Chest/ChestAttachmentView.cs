@@ -157,8 +157,8 @@ namespace ChestDecor
 
         /// <summary>
         /// Bounds of an attachment's geometry around its own position, in the chest's axes, with its current
-        /// rotation and size applied. <see cref="PlacementLimits"/> measures from these edges, so an item can
-        /// get exactly 10 cm clear of the chest whatever its shape, turn or size.
+        /// rotation and size applied. Used for the default spot (resting on the chest); the placement limits themselves are measured
+        /// from the item's middle (<see cref="PlacementLimits"/>), so they don't change with its turn or size.
         /// </summary>
         internal Bounds ExtentOf(ChestAttachment a)
         {
@@ -201,12 +201,13 @@ namespace ChestDecor
             var spread = (index - (slots - 1) * 0.5f) * (chest.size.x / slots);
             attachment.Euler = Vector3.zero;
 
-            // the item's lowest point rests on the chest's top
+            // the item's lowest point rests on the chest's top - unless that puts its middle more than 10 cm above the chest (a tall item):
+            // then the placement limit lowers it into the chest (PlacementLimits, measured from the middle since 2026-10-26)
             var extent = ExtentOf(attachment);
-            attachment.Position = PlacementLimits.Clamp(new Vector3(
-                chest.center.x + spread,
-                chest.max.y - extent.min.y,
-                chest.center.z), chest, extent);
+            var resting = new Vector3(chest.center.x + spread, chest.max.y - extent.min.y, chest.center.z);
+            attachment.Position = PlacementLimits.Clamp(resting, chest);
+            Kydl.Common.ModLog.Verbose("ChestAttachmentView: default spot for '" + prefab + "' at " + attachment.Position.ToString("F3") + ", size " + scale.ToString("0.00") +
+                                       (attachment.Position == resting ? "" : " (lowered from " + resting.ToString("F3") + " by the placement limit)"));
             return attachment;
         }
 

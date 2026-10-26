@@ -64,29 +64,35 @@ namespace ChestDecor
             bool has = HasSelection;
             _view.SetEnabled(has);
             var b = Decor.LocalBounds;
-            var extent = has ? Decor.ExtentOf(ChestDecorUI.WorkAtt[SelectedIndex]) : new Bounds(Vector3.zero, Vector3.zero);
+            if (has) KeepInsideLimits(ChestDecorUI.WorkAtt[SelectedIndex], b);
             for (int k = 0; k < PositionView.Axes; k++)
             {
                 float min, max;
-                if (k < 3) { min = PlacementLimits.Low(b, extent, k); max = PlacementLimits.High(b, extent, k); }     // edge 10 cm clear of each side
+                if (k < 3) { min = PlacementLimits.Low(b, k); max = PlacementLimits.High(b, k); }     // the item's middle: 10 cm outside each side
                 else if (k < 6) { min = 0f; max = 360f; }
                 else { min = ChestAttachment.MinScale; max = ChestAttachment.MaxScale; }
                 var value = has ? ValueOf(ChestDecorUI.WorkAtt[SelectedIndex], k) : (min + max) * 0.5f;
                 _view.SetSlider(k, min, max, value);
             }
-            if (has) ModLog.Verbose("PositionPage: sliders for item " + SelectedIndex + " ('" + ChestDecorUI.WorkAtt[SelectedIndex].Prefab + "'), chest bounds " + b.size.ToString("F2") + " m");
+            if (has) ModLog.Verbose("PositionPage: sliders for item " + SelectedIndex + " ('" + ChestDecorUI.WorkAtt[SelectedIndex].Prefab + "'), chest bounds " +
+                                    b.size.ToString("F2") + " m, middle ranges x " + Range(b, 0) + ", y " + Range(b, 1) + ", z " + Range(b, 2) +
+                                    " (the same at every rotation and size), position " + ChestDecorUI.WorkAtt[SelectedIndex].Position.ToString("F3"));
         }
 
+        static string Range(Bounds b, int k) { return PlacementLimits.Low(b, k).ToString("0.00") + ".." + PlacementLimits.High(b, k).ToString("0.00"); }
+
         /// <summary>
-        /// Turning or resizing the selected item changes how far its edges reach, and so how far each direction slider may go. Updates the
-        /// three ranges and keeps the item inside them.
+        /// An item saved before the limits were measured from its middle (2026-10-26) can be further out than now allowed: it is moved
+        /// inside when it is selected (only the unsaved working copy; Save keeps it). Expected outcome: returns whether it is allowed now.
         /// </summary>
-        void RefreshDirectionRanges(ChestAttachment a)
+        static bool KeepInsideLimits(ChestAttachment a, Bounds chest)
         {
-            var chest = Decor.LocalBounds;
-            var extent = Decor.ExtentOf(a);
-            a.Position = PlacementLimits.ClampToRange(a.Position, chest, extent);
-            for (int k = 0; k < 3; k++) _view.SetSlider(k, PlacementLimits.Low(chest, extent, k), PlacementLimits.High(chest, extent, k), a.Position[k]);
+            if (PlacementLimits.Allowed(a.Position, chest)) return true;
+            var was = a.Position;
+            a.Position = PlacementLimits.Clamp(a.Position, chest);
+            ModLog.Verbose("PositionPage: '" + a.Prefab + "' moved inside the placement limits, " + was.ToString("F3") + " -> " + a.Position.ToString("F3"));
+            Decor.ShowAttachments(ChestDecorUI.WorkAtt);
+            return PlacementLimits.Allowed(a.Position, chest);
         }
 
         static float ValueOf(ChestAttachment a, int axis)
@@ -123,10 +129,10 @@ namespace ChestDecor
             var a = ChestDecorUI.WorkAtt[SelectedIndex];
             if (axis < 3)
             {
-                // keep the item's edges within 10 cm of the chest (see PlacementLimits); the limits may stop or move the other axes too
+                // keep the item's middle within 10 cm of the chest surface, outside or inside (see PlacementLimits)
                 var moved = a.Position;
                 moved[axis] = value;
-                a.Position = PlacementLimits.Clamp(moved, Decor.LocalBounds, Decor.ExtentOf(a), axis, a.Position);
+                a.Position = PlacementLimits.Clamp(moved, Decor.LocalBounds, axis, a.Position);
                 for (int k = 0; k < 3; k++) if (k != axis || !Mathf.Approximately(a.Position[k], value)) _view.SetValue(k, a.Position[k]);
                 if (!Mathf.Approximately(a.Position[axis], value)) ModLog.Verbose("PositionPage: axis " + axis + " stopped at " + a.Position[axis].ToString("0.000") + " m by the placement limit (asked " + value.ToString("0.000") + ")");
             }
@@ -139,7 +145,9 @@ namespace ChestDecor
                     case 5: a.Euler = new Vector3(a.Euler.x, a.Euler.y, value); break;
                     default: a.Scale = Mathf.Clamp(value, ChestAttachment.MinScale, ChestAttachment.MaxScale); break;
                 }
-                RefreshDirectionRanges(a);     // a turn or a new size changes how far the item's edges reach
+                // the item turns / grows around its middle and the limits are measured from the middle: position and ranges stay as they are
+                ModLog.Verbose("PositionPage: item " + SelectedIndex + " " + (axis == 6 ? "size " + a.Scale.ToString("0.00") : "rotation " + a.Euler.ToString("F0")) +
+                               ", position unchanged " + a.Position.ToString("F3"));
             }
             Decor.ShowAttachments(ChestDecorUI.WorkAtt);
             ShowStatus();

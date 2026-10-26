@@ -106,14 +106,14 @@ namespace ChestDecor
                 "spaces and symbols. Takes effect immediately.");
 
             FreeCameraEnabled = c.Bind("Camera", "Free Camera", true,
-                "While the decorate window is open, let the camera fly around freely (hold right mouse to look, WASD / Q / E to move, mouse wheel " +
-                "to zoom, F to go back to the normal camera). Needs no admin rights.");
+                "While the decorate window is open, let the camera circle the chest (WASD / arrows or hold right mouse to circle, mouse wheel " +
+                "or E / Q to zoom, F to go back to the normal camera). Needs no admin rights.");
             FreeCameraMaxDistance = c.Bind("Camera", "Camera Max Distance", 5f,
-                new ConfigDescription("How far (in metres) the free camera may get from the player.", new AcceptableValueRange<float>(3f, 10f)));
+                new ConfigDescription("Furthest the camera may zoom out from the chest, in metres (closest is always 1 m from it).", new AcceptableValueRange<float>(3f, 10f)));
             FreeCameraSpeed = c.Bind("Camera", "Camera Speed", 3f,
-                new ConfigDescription("Free camera fly speed in metres per second (hold Shift for 3x).", new AcceptableValueRange<float>(0.5f, 20f)));
+                new ConfigDescription("How fast the keys circle (x 30 degrees per second) and zoom (metres per second); hold Shift for 3x.", new AcceptableValueRange<float>(0.5f, 20f)));
             FreeCameraLookSpeed = c.Bind("Camera", "Camera Look Sensitivity", 0.2f,
-                new ConfigDescription("Free camera turn speed in degrees per pixel of mouse movement.", new AcceptableValueRange<float>(0.02f, 1f)));
+                new ConfigDescription("How far the camera circles per pixel of mouse movement (right mouse drag), in degrees.", new AcceptableValueRange<float>(0.02f, 1f)));
 
             DebugLog = c.Bind("DebugLog", "Enable", false,
                 "Writes detailed lines about everything the mod does to the BepInEx log (for bug reports). Leave off while playing normally.");

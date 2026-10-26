@@ -75,3 +75,6 @@ Desktop.ini
 /*-Mod/release/*/release-gate.*
 /*-Mod/release/*/_stage/
 /*-Mod/release/*/*.zip
+
+# test-quality output (coverage, Stryker): rebuilt by _agent/tools/test-quality.ps1
+/*-Tests/_quality/

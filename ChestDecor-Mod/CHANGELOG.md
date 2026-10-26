@@ -2,11 +2,11 @@
 
 ## 1.1.0
 
-Not tested in game yet.
-
 - **New window look**: the decorate window uses the shared KydlDev menu style (dark panel, gold accents, Norse font), opens 5% from the right edge, can be dragged by its title and scrolls when it does not fit. The character does not move while it is open; Esc closes it.
 - **Colours**: the colour wheel is replaced by the shared colour editor (preview, swatches, Red / Green / Blue sliders, hex code) with a Brightness slider. Tint / Full colour, Preview, Save and Revert work as before.
 - **Position items**: the sliders have a typed number box; the dots under them still jump to 25% steps (directions) or 0 / 50 / 100% (tilt, turn, roll, size).
+- **Placement limits** are measured from the item's middle: at most 10 cm away from the chest and at most 10 cm into it, the same at every tilt, turn, roll and size (a long item standing up could go over 1 m away before, and turning it changed the limit). A standing spear can be pushed half into the lid, like a spike. Older placements that are further out move inside when selected.
+- **Camera**: replaced the free-flying camera with one that circles the chest, always aimed at it: A / D and W / S (or arrows, or right mouse drag) circle, mouse wheel or E / Q zoom from 1 m to *Camera Max Distance* away from the chest (1 m is a hard limit: never closer, never inside it). It stops where it would hit a wall, ceiling, floor or the terrain instead of going through.
 - **KY-Items**: items and pieces from other KydlDev mods (and anything in the KY-Items build category) can be attached. They show under their normal filter and under a new KY-Items filter, which only appears when at least one such item exists.
 - **Config**: new `[General] EnableAll` and `[DebugLog] Enable`. The developer options of the old `[Debug]` section left the player config. Every setting now applies as soon as it is changed, also in an open window.
 

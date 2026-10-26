@@ -18,8 +18,8 @@ resize every attached item. Everything is cosmetic and is saved on the chest its
 * **Position items**: move, tilt, turn, roll and resize each attached item with sliders. The chest shows every change
   live.
 * **Refunds**: removing an attachment, or destroying the chest, returns the materials that were paid.
-* **Free camera**: fly the camera around the chest while the window is open, to check colours and placement. No admin
-  rights needed.
+* **Camera**: circle the chest while the window is open (keys or mouse, zoom 1 - 5 m, stops at walls and floors), to check
+  colours and placement. No admin rights needed.
 * **Multiplayer safe**: one editor per chest at a time, everything is stored in the chest's data and syncs by itself.
 * **Cosmetic only**: players without the mod can still join and just see normal chests.
 
@@ -176,12 +176,12 @@ paid).
   Each slider also has a number box: type a value and press Enter. The dots under each slider are clickable: click one to jump the slider (and the item) straight to that spot.
   *Left / right*, *Up / down* and *Front / back* have nine evenly spaced dots (-100%, -75%, -50%, -25%, 0, 25%, 50%,
   75%, 100% of the slider, 0 being the middle dot); *Tilt*, *Turn*, *Roll* and *Size* have three (0, 50, 100%).
-* **How far an item can go**: *Left / right*, *Up / down* and *Front / back* are measured from the **item's own edges**, not
-  from its middle. At either end of a slider the item's nearest edge is exactly **10 cm** clear of the chest, on every
-  side, so nothing of the item is inside the chest there. This takes the item's current **Tilt / Turn / Roll** and **Size**
-  into account (the slider ranges update when you change them). The item's edge is measured from its real
-  model (its vertices when the game allows reading them, otherwise its bounding box) and the chest from its bounding box.
-  Going the other way, an item can't be pushed deeper than 10 cm below the chest surface (measured from the item's position).
+* **How far an item can go**: *Left / right*, *Up / down* and *Front / back* move the **middle of the item**, and items
+  turn and resize around their middle. The middle can be at most **10 cm away from the chest** and at most **10 cm into
+  it** (measured from the nearest side of the chest's box). This never changes when you tilt, turn, roll or resize the
+  item. A spear lying flat therefore stays (almost) outside the chest; a spear standing up can be pushed half into the
+  lid, like a spike. Items saved with an older version that are further out are moved inside when you select them
+  (only saved if you press Save).
 * **Save** keeps the positions, **Revert** goes back to the last saved ones, **Reset item** puts the selected item
   back to its starting spot. Closing the window drops unsaved moves.
 * **Remove** takes an item off the chest immediately and refunds it (see below).
@@ -213,24 +213,28 @@ saved on it, gives back the **materials it cost**.
   as long as the paid materials themselves still exist in the game. A material that no longer exists is skipped (and
   logged); the others are still returned.
 
-### Free camera (all tabs)
-While the window is open you can move the camera around the chest to check colours and how attached items line
-up. It needs **no admin rights** and is not the game's `freefly` cheat. The player stays where they are.
+### Camera (all tabs)
+While the window is open the camera can **circle the chest**, always aimed at its middle, to check colours and how
+attached items line up. It needs **no admin rights** and is not the game's `freefly` cheat. The player stays where they are.
 
 | Input | Action |
 |---|---|
-| Hold **right mouse** + move the mouse | Look around (start the drag outside the window) |
-| **W A S D** (or arrow keys) | Fly forward / left / back / right |
-| **E** or **Space** / **Q** or **Left Ctrl** | Fly up / down |
-| **Mouse wheel** (outside the window) | Zoom in / out |
-| **Shift** | Move 3x faster |
+| **A / D** (or Left / Right arrow) | Circle left / right around the chest |
+| **W / S** (or Up / Down arrow) | Circle up / down (look from above or from lower) |
+| Hold **right mouse** + move the mouse | Circle with the mouse (start the drag outside the window) |
+| **Mouse wheel** (outside the window), **E / Q** | Zoom in / out |
+| **Shift** | 3x faster |
 | **F** | Back to the normal game camera |
 
-* The camera never gets further than **5 m from the player** (setting *Camera Max Distance*, 3 - 10 m), measured from the
-  middle of the player's body, so it can't be used to scout the surroundings. If the chest is further than that from
-  you, step closer first. It also stays above the terrain, and it travels with the player (on a ship, for example).
-* The normal camera is left alone until the first camera input, and the camera starts exactly where the game
-  camera is. If that is further out than the limit, the view eases in to the limit.
+* Zoom goes from **1 m** to **5 m** away from the chest (measured from its nearest side, edge or corner; setting
+  *Camera Max Distance*, 3 - 10 m), so it can't be used to scout the surroundings. **1 m is a hard limit**: the camera
+  never gets closer to the chest or inside it.
+* The camera **stops** where it would hit something: it only moves to spots with a free view of the chest, 30 cm of
+  free space around it and above the terrain. Circling into a floor, wall or ceiling simply stops there, like against
+  a wall. It also doesn't look up at the chest from far below.
+* The normal camera is left alone until the first camera input, and the camera starts from where the game camera
+  is (moved up or closer to the nearest free spot if that one is blocked). If there is no free spot at all (a chest
+  in a tiny room), you get a message and the normal camera stays.
 * Letters typed into the hex or search box don't move the camera. Click out in the world to give the keyboard
   back to the camera.
 * The game's own free fly (admin) takes priority: while it is active this camera stays out of the way.
@@ -256,10 +260,10 @@ and cost nothing on the network.
 | Ignored Ingredients (`Attachments`) | `BattleIdol,ProtectionIdol` | Ingredients left out of every attachment cost (shown, checked, paid, refunded). Some recipes list these only for upgrading the item. Matches prefab / item name, ignoring case and spaces. The idols `Upgrader1Weapon`..`Upgrader7Weapon` and `Upgrader1Armor`..`Upgrader7Armor` are always left out, whatever this says |
 | Include Tree Saplings (`Attachments`) | true | List the small saplings of trees under **Produce** (planted with the tree's seed, cone or acorn). Never the grown tree. Off = no trees listed at all (tree seeds stay listed as seeds). Takes effect immediately |
 | Extra Decorative Prefabs (`Attachments`) | *(empty)* | Comma separated prefab names to also list under **Decor** (ignored unless the prefab has a craft / build recipe) |
-| Free Camera (`Camera`) | true | Allow the free camera while the window is open |
-| Camera Max Distance (`Camera`) | 5 | How far (m) the free camera may get from the player (3 - 10) |
-| Camera Speed (`Camera`) | 3 | Fly speed in m/s, Shift = 3x (0.5 - 20) |
-| Camera Look Sensitivity (`Camera`) | 0.2 | Degrees turned per pixel of mouse movement (0.02 - 1) |
+| Free Camera (`Camera`) | true | Allow the camera that circles the chest while the window is open |
+| Camera Max Distance (`Camera`) | 5 | Furthest zoom (m) from the chest; closest is always 1 m (3 - 10) |
+| Camera Speed (`Camera`) | 3 | Keys circle at this x 30 degrees/s and zoom at this many m/s, Shift = 3x (0.5 - 20) |
+| Camera Look Sensitivity (`Camera`) | 0.2 | Degrees circled per pixel of right-mouse drag (0.02 - 1) |
 | EnableAll | true | Switches Chest Decor on / off while playing. Off: no hotkey, hint or window; decorated chests keep their look |
 | Enable (`DebugLog`) | false | Detailed log lines about everything the mod does (for bug reports) |
 
