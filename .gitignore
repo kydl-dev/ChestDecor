@@ -78,3 +78,10 @@ Desktop.ini
 
 # test-quality output (coverage, Stryker): rebuilt by _agent/tools/test-quality.ps1
 /*-Tests/_quality/
+
+# --- not published to GitHub (user, 2026-10-29) ---
+/_testruns/
+/_agent/
+/.claude/
+/CLAUDE.md
+/*-Mod/build/*.dll
