@@ -107,7 +107,7 @@ namespace ChestDecor
                 decor.BeginEdit();
                 IsOpen = true;
 
-                _view = new DecorWindowView(T, ChestName(), Close, OnTab, pages);
+                _view = new DecorWindowView(T, ChestName(), Close, OnTab, pages, ModSettings.CameraOn);
                 if (pages[0]) ColorsPage.Open(decor, _view.Pages[0]);
                 if (pages[1]) AttachPage.Open(_view.Pages[1]);
                 if (pages[2]) PositionPage.Open(_view.Pages[2]);

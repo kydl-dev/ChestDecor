@@ -13,6 +13,7 @@ namespace ChestDecor.Ui
         {
             { "chestdecor_title", "Chest Decor" },
             { "chestdecor_footer", "Esc closes  ·  right mouse + WASD: free camera  ·  F: normal camera" },
+            { "chestdecor_footer_nocam", "Esc closes" },
             { "chestdecor_tab_colors", "Colours" },
             { "chestdecor_tab_attach", "Attach items" },
             { "chestdecor_tab_position", "Position items" },

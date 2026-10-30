@@ -149,6 +149,7 @@ namespace ChestDecor
             // a functionality switched off while the window is open: close it, it shows the pages again when it is opened next
             ColoursEnable.SettingChanged += (s, e) => { ModLog.Info("Config: [Colours] Enable = " + ColoursEnable.Value); ChestDecorUI.Close(); };
             AttachmentsEnable.SettingChanged += (s, e) => { ModLog.Info("Config: [Attachments] Enable = " + AttachmentsEnable.Value); ChestDecorUI.Close(); };
+            FreeCameraEnabled.SettingChanged += (s, e) => { ModLog.Info("Config: [Camera] Enable = " + FreeCameraEnabled.Value); ChestDecorUI.Close(); };   // the footer hint follows it
             ShowTestItems.SettingChanged += (s, e) => Plugin.OnCatalogSettingChanged("ShowTestItems");
             ExtraDecorPrefabs.SettingChanged += (s, e) => Plugin.OnCatalogSettingChanged("Extra Decorative Prefabs");
             IncludeTreeSaplings.SettingChanged += (s, e) => Plugin.OnCatalogSettingChanged("Include Tree Saplings");

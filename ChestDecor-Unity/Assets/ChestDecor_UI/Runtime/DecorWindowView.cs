@@ -29,13 +29,13 @@ namespace ChestDecor.Ui
         internal int Tab { get { return _tab; } }
 
         /// `pagesShown`: which of the three pages are offered (null = all). A hidden page gets no tab button and is never chosen.
-        internal DecorWindowView(Func<string, string> text, string chestName, Action onClose, Action<int> onTab, bool[] pagesShown = null)
+        internal DecorWindowView(Func<string, string> text, string chestName, Action onClose, Action<int> onTab, bool[] pagesShown = null, bool cameraOn = true)
         {
             _text = text; _onTab = onTab;
             if (pagesShown != null) for (int i = 0; i < TabCount && i < pagesShown.Length; i++) _shown[i] = pagesShown[i];
             int first = Array.IndexOf(_shown, true);
             if (first < 0) first = 0;
-            Window = UiKit.Window(text("chestdecor_title"), text("chestdecor_footer"), onClose, out Body);
+            Window = UiKit.Window(text("chestdecor_title"), text(cameraOn ? "chestdecor_footer" : "chestdecor_footer_nocam"), onClose, out Body);   // no camera hint while the camera is off
             Window.name = "chestdecor-window";
 
             var top = new VisualElement(); top.style.flexShrink = 0; UiKit.Pad(top, 8, 18);
