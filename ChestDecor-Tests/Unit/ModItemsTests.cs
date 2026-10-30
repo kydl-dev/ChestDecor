@@ -3,12 +3,12 @@ using FsCheck;
 
 namespace ChestDecor.Tests.Unit
 {
-    /// <summary>KY-Items (user, 2026-10-26): which mods count as the user's own. Pure rule in KyItems.IsUserGuid, reached in the built DLL.</summary>
+    /// <summary>KY-Items (user, 2026-10-26): which mods count as the user's other mods. Pure rules in ModItems (ChestDecor leaves out itself, the rest is KydlCore's rule), reached in the built DLL.</summary>
     [TestFixture]
-    public class KyItemsTests
+    public class ModItemsTests
     {
         const string Prefix = "com.kydldev.";
-        static bool IsUser(string guid) { return (bool)ModAssembly.Call("ChestDecor.KyItems", "IsUserGuid", guid); }
+        static bool IsUser(string guid) { return (bool)ModAssembly.Call("ChestDecor.ModItems", "IsUserGuid", guid); }
 
         [TestCase("com.kydldev.DrainTarPit")]
         [TestCase("com.kydldev.CargoToGo")]
@@ -24,14 +24,19 @@ namespace ChestDecor.Tests.Unit
         [TestCase(null)]
         public void OtherGuids_DoNotCount(string guid) { Assert.That(IsUser(guid), Is.False); }
 
-        [Test]
-        public void IsUserMod_UsesThePluginsGuid_NullIsNot()
-        {
-            Assert.That((bool)ModAssembly.Call("ChestDecor.KyItems", "IsUserMod", new BepInEx.BepInPlugin("com.kydldev.DrainTarPit", "DrainTarPit", "1.0.0")), Is.True);
-            Assert.That((bool)ModAssembly.Call("ChestDecor.KyItems", "IsUserMod", new BepInEx.BepInPlugin("com.other.Mod", "Mod", "1.0.0")), Is.False);
-            Assert.That((bool)ModAssembly.Call("ChestDecor.KyItems", "IsUserMod", new object[] { null }), Is.False);
-        }
+        static bool IsOwn(string guid) { return (bool)ModAssembly.Call("ChestDecor.ModItems", "IsOwnGuid", guid); }
 
+        [TestCase("com.kydldev.chestdecor")]
+        [TestCase("com.kydldev.ChestDecor")]
+        [TestCase("COM.KYDLDEV.CHESTDECOR")]
+        public void IsOwnGuid_ChestDecor_InAnyCase(string guid) { Assert.That(IsOwn(guid), Is.True); }
+
+        [TestCase("com.kydldev.DrainTarPit")]
+        [TestCase("com.kydldev.chestdecor2")]
+        [TestCase("com.kydldev.")]
+        [TestCase("")]
+        [TestCase(null)]
+        public void IsOwnGuid_AnythingElse_IsNot(string guid) { Assert.That(IsOwn(guid), Is.False); }
         [Test]
         public void KyItemsCategoryFlag_IsItsOwnBit()
         {

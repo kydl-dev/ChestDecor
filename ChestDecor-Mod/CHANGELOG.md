@@ -1,5 +1,13 @@
 # Changelog
 
+## 2.0.0
+
+- **Requires KydlCore.** The window look, the input lock, the KY hub and the KY-Items list now come from the KydlCore mod, which has to be installed (the mod manager adds it).
+- **Menu moved to the KY hub (F6)**: all ChestDecor settings are on its own page in the hub (the KY hub lists every KydlDev mod). The decorate window itself still opens with the *Customize Hotkey* (K) while you look at a chest.
+- **Esc** closes the decorate window through KydlCore (only the front window closes when more than one is open).
+- **KY-Items**: the list of items and pieces of other KydlDev mods is read from KydlCore, so a new KydlDev mod with items shows up here without a ChestDecor update.
+- Settings, saved chests and the config file stay as they were; nothing to do when updating from 1.1.0.
+
 ## 1.1.0
 
 - **New window look**: the decorate window uses the shared KydlDev menu style (dark panel, gold accents, Norse font), opens 5% from the right edge, can be dragged by its title and scrolls when it does not fit. The character does not move while it is open; Esc closes it.

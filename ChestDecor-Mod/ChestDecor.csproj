@@ -13,6 +13,8 @@
     <PackageId>ChestDecor</PackageId>
     <!-- AssetBundle built by the Unity project (Valheim > Build AssetBundles); embedded into the DLL when Assets\chestdecor exists -->
     <BundleName>chestdecor</BundleName>
+    <!-- 2.0.0: the UI kit, the input lock, the KY hub and the KY-Items registry come from KydlCore.dll (a hard dependency), not from a copy in this DLL -->
+    <KydlUseCore>true</KydlUseCore>
   </PropertyGroup>
 
   <ItemGroup>

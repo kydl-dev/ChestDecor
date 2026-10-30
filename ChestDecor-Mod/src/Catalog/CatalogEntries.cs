@@ -295,16 +295,14 @@ namespace ChestDecor
         }
 
         /// <summary>
-        /// The user's own items and pieces (see <see cref="KyItems"/>): an entry that is already in the list (it matched a normal rule) gets the
+        /// The user's own items and pieces (see <see cref="ModItems"/>): an entry that is already in the list (it matched a normal rule) gets the
         /// KyItems flag on top; any other one is added with KyItems as its category, listed by rule (an item costs its recipe, or the item
         /// itself; a piece its build cost). Expected outcome: returns how many entries carry the KyItems flag afterwards.
         /// </summary>
         internal static int AddKyItems(List<AttachEntry> entries, Dictionary<string, AttachEntry> byName,
             Dictionary<string, int> prices, Dictionary<string, Recipe> recipes, Dictionary<string, AttachPieceInfo> pieces)
         {
-            var piecePrefabs = new List<GameObject>();
-            foreach (var info in pieces.Values) if (info.Object != null) piecePrefabs.Add(info.Object);
-            var found = KyItems.Collect(piecePrefabs);
+            var found = ModItems.Collect();
             int tagged = 0, added = 0;
             foreach (var pair in found)
             {

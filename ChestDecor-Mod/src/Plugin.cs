@@ -16,6 +16,7 @@ namespace ChestDecor
     /// </summary>
     [BepInPlugin(ModGuid, ModName, ModVersion)]
     [BepInDependency(Jotunn.Main.ModGuid)]
+    [BepInDependency(KydlCore.Plugin.ModGuid, "0.1.0")]     // the UI (hub, windows, input lock) and the KY-Items registry (manifest: KydlDev-KydlCore-0.1.0, same version)
     // Purely cosmetic: players without the mod can still join, they just see the normal chest.
     [NetworkCompatibility(CompatibilityLevel.NotEnforced, VersionStrictness.None)]
     public class Plugin : BaseUnityPlugin
@@ -24,7 +25,7 @@ namespace ChestDecor
         // ModVersion = manifest.json version_number = newest CHANGELOG heading (tests check it).
         public const string ModGuid = "com.kydldev.chestdecor";
         public const string ModName = "ChestDecor";
-        public const string ModVersion = "1.1.0";
+        public const string ModVersion = "2.0.0";
 
         internal static Plugin Instance;
         Harmony _harmony;
@@ -36,17 +37,11 @@ namespace ChestDecor
             ModLog.Init(Logger, ModName, () => ModSettings.DebugLog != null && ModSettings.DebugLog.Value);
             ModLog.Info(ModName + " " + ModVersion + " loaded (dll built " + File.GetLastWriteTime(Assembly.GetExecutingAssembly().Location).ToString("yyyy-MM-dd HH:mm:ss") + ")");
 
-            // the shared UI kit (Kydl.Ui) logs through the mod's log: debug lines only with the debug switch on
-            Kydl.Ui.UiLog.VerboseSink = s => ModLog.Verbose(s);
-            Kydl.Ui.UiLog.WarnSink = s => ModLog.Warn(s);
-            Kydl.Ui.UiLog.ErrorSink = s => ModLog.Error(s);
-            Kydl.Ui.UiKit.Owner = ModName;
-
+            // The UI kit (Kydl.Ui), its log sinks, the one UI root and the input lock belong to KydlCore (2.0.0): nothing is set up here.
             ModSettings.Bind(Config);
             _cfgWatcher = new ConfigReloader(Config);
             Loc.Register(UiText.En);
 
-            UiInputLock.Install(ModGuid);           // the character does not move while the decorate window is open
             _harmony = new Harmony(ModGuid);
             int failed = ApplyPatches();
             ModLog.Info(ModName + " ready: customize hotkey " + ModSettings.Hotkey.Value + (failed > 0 ? ", " + failed + " patch(es) missing" : ""));

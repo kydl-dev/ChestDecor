@@ -16,9 +16,10 @@ namespace ChestDecor
     /// </summary>
     internal static class ChestDecorUI
     {
-        const string LockName = "ChestDecor.Window";
+        const string WindowId = "editor";          // KyUi window id (Core builds guid + ":" + id); the input lock and Escape belong to Core
 
         static DecorWindowView _view;
+        static KydlCore.KyWindow _win;             // the window as Core knows it (null while closed)
         static ChestDecorator _decor;
         static int _closedFrame = -100;
         static float _nextBeat, _nextDistanceLog;
@@ -83,8 +84,7 @@ namespace ChestDecor
         public static void Open(ChestDecorator decor)
         {
             if (IsOpen) Close();
-            var root = UiKit.Root;
-            if (root == null) { Toast("Chest Decor: UI is not available yet."); ModLog.Warn("ChestDecorUI: UI Toolkit panel missing - window not opened"); return; }
+            if (KydlCore.KyUi.Root == null) { Toast("Chest Decor: UI is not available yet."); ModLog.Warn("ChestDecorUI: the Core UI root is missing - window not opened"); return; }
 
             // the caller took the chest's editor lock; make sure we still are the one editor
             if (!decor.HoldsLock())
@@ -109,8 +109,9 @@ namespace ChestDecor
                 ColorsPage.Open(decor, _view.Pages[0]);
                 AttachPage.Open(_view.Pages[1]);
                 PositionPage.Open(_view.Pages[2]);
-                root.Add(_view.Window);
-                UiInputLock.Hold(LockName);
+                // Core puts the window on its UI root, holds the one input lock and closes it on Escape (then calls OnWindowClosed)
+                _win = KydlCore.KyUi.Open(Plugin.ModGuid, WindowId, _view.Window, OnWindowClosed);
+                if (_win == null) throw new InvalidOperationException("KyUi.Open refused the window");
                 FreeCamera.Begin();
                 ModLog.Verbose("ChestDecorUI: window opened for '" + decor.name + "' (" + decor.Slots.Count + " colour part(s), " + SavedAtt.Count + " attachment(s))");
             }
@@ -125,6 +126,14 @@ namespace ChestDecor
         public static void Close()
         {
             if (!IsOpen) return;
+            Teardown(null);
+        }
+
+        /// Core closed the window (Escape): do the same clean-up as Close(). Not called again for a window that Teardown closes itself.
+        static void OnWindowClosed()
+        {
+            if (_win == null) return;
+            ModLog.Verbose("ChestDecorUI: Core closed the window (Escape)");
             Teardown(null);
         }
 
@@ -143,7 +152,13 @@ namespace ChestDecor
             catch (Exception e) { ModLog.Warn("Restoring chest visuals failed: " + e.Message); }
             try { if (decor != null) decor.Unlock(); }           // give the chest back to the other players
             catch (Exception e) { ModLog.Warn("Releasing the chest failed: " + e.Message); }
-            try { if (_view != null) _view.Window.RemoveFromHierarchy(); }
+            try
+            {
+                var win = _win;
+                _win = null;                                 // first: Core calls OnWindowClosed back, which must find nothing to do
+                if (win != null) win.Close();                // off Core's UI root, input lock released with the last window
+                else if (_view != null) _view.Window.RemoveFromHierarchy();
+            }
             catch (Exception e) { ModLog.Warn("Removing the window failed: " + e.Message); }
             _view = null;
             _decor = null;
@@ -151,8 +166,7 @@ namespace ChestDecor
             catch (Exception e) { ModLog.Warn("Clearing the pages failed: " + e.Message); }
             SavedAtt = new List<ChestAttachment>();
             WorkAtt = new List<ChestAttachment>();
-            UiInputLock.Release(LockName);
-            ModLog.Verbose("ChestDecorUI: window closed, chest " + (decor != null ? "'" + decor.name + "' released" : "(none)") + ", input lock holders " + UiInputLock.Count);
+            ModLog.Verbose("ChestDecorUI: window closed, chest " + (decor != null ? "'" + decor.name + "' released" : "(none)") + ", Core windows still open: " + KydlCore.KyUi.AnyOpen);
         }
 
         /// Every frame while the window is open (DecorOpener.Tick).
@@ -160,7 +174,6 @@ namespace ChestDecor
         {
             if (!IsOpen) return;
             if (_view == null || _decor == null || Player.m_localPlayer == null) { ModLog.Verbose("ChestDecorUI: chest or player gone - closing"); Close(); return; }
-            if (Input.GetKeyDown(KeyCode.Escape)) { ModLog.Verbose("ChestDecorUI: Escape - closing"); Close(); return; }
 
             var dist = Vector3.Distance(Player.m_localPlayer.transform.position, _decor.transform.position);
             float max = ModSettings.MaxWindowDistance.Value;

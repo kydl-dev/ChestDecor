@@ -25,7 +25,7 @@ resize every attached item. Everything is cosmetic and is saved on the chest its
 
 ## Requirements and installation
 
-* BepInEx 5 (BepInExPack for Valheim) and Jotunn.
+* BepInEx 5 (BepInExPack for Valheim), Jotunn and **KydlCore** (the shared KydlDev base: windows, the KY hub, the KY-Items list; a mod manager installs it for you).
 * Put `ChestDecor.dll` in `BepInEx/plugins` (or install with your mod manager). Players who want to see the decorations
   and edit chests need the mod; players without it are not blocked (see *Multiplayer* below).
 * The config file is `BepInEx/config/com.kydldev.chestdecor.cfg`; it is created the first time the game starts with the mod.
@@ -147,7 +147,7 @@ is a valuable, so it is under Trader).
   goblins' torches (`GoblinTorch`, `GoblinTorchDeepNorth`) and the Elaking's attack lantern (`Elaking_AttackLantern`).
   Like every attachment, only the model is copied: an attached torch or lantern does not give off light.
 * **KY-Items** (only shown when at least one exists): the items and pieces of the other KydlDev mods you have installed
-  (any mod with a `com.kydldev.` id, read from Jotunn), plus every hammer piece in the shared **KY-Items** build category.
+  (any mod with a `com.kydldev.` id, listed by KydlCore), plus every hammer piece in the shared **KY-Items** build category.
   They are also listed under their normal filter when they fit one (a KydlDev food item is under Food too). They cost
   their recipe or build cost, or one of the item itself, like any other entry.
 
@@ -244,6 +244,8 @@ Attached items are purely visual: only the meshes are copied, so they cannot be 
 and cost nothing on the network.
 
 ## Config  (`BepInEx/config/com.kydldev.chestdecor.cfg`)
+All settings below can also be changed in game: press the KY hub key (F6 by default, set in KydlCore), pick **ChestDecor** and its **Settings** page.
+
 | Setting | Default | Meaning |
 |---|---|---|
 | Customize Hotkey | K | Key to open the editor while looking at a chest |

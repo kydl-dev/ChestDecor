@@ -32,6 +32,9 @@ namespace ChestDecor.Tests
         /// The built mod (the copy in build\ is the real one). KYDL_MOD_DLL overrides.
         public static string ModDll { get { return Env("KYDL_MOD_DLL") ?? Path.Combine(ModDir, "build", "ChestDecor.dll"); } }
 
+        /// KydlCore.dll, which every mod requires: the built KydlCore next to this project (E:\Projects\Valheim\KydlCore). KYDL_CORE_DLL overrides.
+        public static string CoreDll { get { return Env("KYDL_CORE_DLL") ?? Path.GetFullPath(Path.Combine(ProjectRoot, "..", "KydlCore", "KydlCore-Mod", "build", "KydlCore.dll")); } }
+
         static string Env(string name)
         {
             var v = Environment.GetEnvironmentVariable(name);
@@ -95,7 +98,7 @@ namespace ChestDecor.Tests
         }
     }
 
-    /// Makes the test process find game / BepInEx / Jotunn assemblies in the ref folder when something asks for them.
+    /// Makes the test process find game / BepInEx / Jotunn assemblies in the ref folder, and KydlCore.dll in KydlCore's build folder, when something asks for them.
     [SetUpFixture]
     public sealed class GameAssemblyResolver
     {
@@ -109,7 +112,8 @@ namespace ChestDecor.Tests
         {
             var name = new AssemblyName(args.Name).Name;
             var path = Path.Combine(TestPaths.RefDir, name + ".dll");
-            return File.Exists(path) ? Assembly.LoadFrom(path) : null;
+            if (File.Exists(path)) return Assembly.LoadFrom(path);
+            return name == "KydlCore" && File.Exists(TestPaths.CoreDll) ? Assembly.LoadFrom(TestPaths.CoreDll) : null;
         }
     }
 }
