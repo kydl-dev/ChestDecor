@@ -174,8 +174,8 @@ paid).
 * Pick an attached item, then use the sliders: **Left / right, Up / down, Front / back, Tilt, Turn, Roll, Size**.
   The chest shows every change live. Positions are relative to the chest, so they stay right however it is turned.
   Each slider also has a number box: type a value and press Enter. The dots under each slider are clickable: click one to jump the slider (and the item) straight to that spot.
-  *Left / right*, *Up / down* and *Front / back* have nine evenly spaced dots (-100%, -75%, -50%, -25%, 0, 25%, 50%,
-  75%, 100% of the slider, 0 being the middle dot); *Tilt*, *Turn*, *Roll* and *Size* have three (0, 50, 100%).
+  Every slider has nine evenly spaced dots, one every 12.5% of the slider (the middle dot is the middle of the range:
+  0 for *Left / right*, *Up / down* and *Front / back*).
 * **How far an item can go**: *Left / right*, *Up / down* and *Front / back* move the **middle of the item**, and items
   turn and resize around their middle. The middle can be at most **10 cm away from the chest** and at most **10 cm into
   it** (measured from the nearest side of the chest's box). This never changes when you tilt, turn, roll or resize the

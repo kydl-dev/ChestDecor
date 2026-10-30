@@ -27,8 +27,8 @@ namespace ChestDecor.Ui
         static readonly string[] AxisKeys =
             { "chestdecor_axis_x", "chestdecor_axis_y", "chestdecor_axis_z", "chestdecor_axis_tilt", "chestdecor_axis_turn", "chestdecor_axis_roll", "chestdecor_axis_size" };
         static readonly string[] Formats = { "0.00", "0.00", "0.00", "0", "0", "0", "0.00" };
-        static readonly float[] DirectionMarks = { 0f, 0.125f, 0.25f, 0.375f, 0.5f, 0.625f, 0.75f, 0.875f, 1f };   // -100 % ... 0 ... 100 %
-        static readonly float[] OtherMarks = { 0f, 0.5f, 1f };
+        // a dot every 12.5 % of the slider (nine dots) on EVERY axis: the three directions (-100 % ... 0 ... 100 %) and tilt, turn, roll and size
+        static readonly float[] Marks = { 0f, 0.125f, 0.25f, 0.375f, 0.5f, 0.625f, 0.75f, 0.875f, 1f };
 
         readonly Func<string, string> _text;
         readonly IPositionActions _act;
@@ -47,7 +47,7 @@ namespace ChestDecor.Ui
             for (int k = 0; k < Axes; k++)
             {
                 int axis = k;
-                _sliders[k] = new UiSlider(0f, 1f, 0.5f, Formats[k], v => _act.Slider(axis, v), k < 3 ? DirectionMarks : OtherMarks);
+                _sliders[k] = new UiSlider(0f, 1f, 0.5f, Formats[k], v => _act.Slider(axis, v), Marks);
                 var row = UiControls.Row(text(AxisKeys[k]), _sliders[k].Root);
                 row.Q<Label>().style.width = 190;
                 page.Add(row);

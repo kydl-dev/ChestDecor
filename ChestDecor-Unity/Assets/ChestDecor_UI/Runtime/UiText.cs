@@ -65,7 +65,7 @@ namespace ChestDecor.Ui
             { "chestdecor_axis_roll", "Roll (°)" },
             { "chestdecor_axis_size", "Size (x)" },
             { "chestdecor_reset_item", "Reset item" },
-            { "chestdecor_note_dots", "Click a dot under a slider to jump there: every 25% for the directions, 0 / 50 / 100% for tilt, turn, roll and size." },
+            { "chestdecor_note_dots", "Click a dot under a slider to jump there: there is a dot every 12.5% of the slider, on every slider." },
             { "chestdecor_note_pos1", "Changes show on the chest right away. Save keeps them; closing the window drops unsaved moves." },
             { "chestdecor_note_pos2", "Remove takes the item off the chest (and drops the materials it cost at your feet)." },
         };
