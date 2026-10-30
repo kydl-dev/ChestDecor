@@ -1,7 +1,7 @@
-﻿using Kydl.Common;
 using System;
 using BepInEx.Configuration;
 using HarmonyLib;
+using Kydl.Common;
 using UnityEngine;
 
 namespace ChestDecor
@@ -26,7 +26,7 @@ namespace ChestDecor
 
         private static void Postfix(Container __instance, ref string __result)
         {
-            if (!ModSettings.On || !ModSettings.ShowHoverHint.Value) return;
+            if (!ModSettings.AnyEditorPage || !ModSettings.ShowHoverHint.Value) return;     // AnyEditorPage includes EnableAll
 
             var player = Player.m_localPlayer;
             if (player == null) return;

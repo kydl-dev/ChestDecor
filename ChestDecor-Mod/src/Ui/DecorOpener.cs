@@ -42,6 +42,7 @@ namespace ChestDecor
             ModLog.Verbose("DecorOpener: hotkey " + ModSettings.Hotkey.Value + " pressed");
             if (!PlayerCanAct(player)) { ModLog.Verbose("DecorOpener: the player can't act right now (menu, chat, inventory) - ignored"); return ChestDecorUI.IsOpen; }
 
+            if (!ModSettings.AnyEditorPage) return Refuse("Chest Decor: colours and attachments are both switched off in the settings.", "[Colours] and [Attachments] Enable are both off");
             var container = GetLookedAtContainer(player);
             if (container == null) return Refuse("Look at a chest to customize it.", "nothing looked at is a container");
             var decorator = container.GetComponent<ChestDecorator>();

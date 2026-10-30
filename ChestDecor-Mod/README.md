@@ -252,9 +252,11 @@ All settings below can also be changed in game: press the KY hub key (F6 by defa
 | Require Chest Access | true | Only chests you could open (private chests, wards) |
 | Only Player Built Chests | true | Ignore world-generated loot chests |
 | Show Hover Hint | true | Add the hotkey hint to the chest hover text |
-| Live Preview | false | Apply changes instantly while editing (otherwise use Preview) |
-| Split Texture Into Parts | true | Split a chest's single texture into base / trim parts (off = one part per material) |
-| Default Colour Mode | Tint | Mode for parts that have no colour yet (`Tint` or `Full`) |
+| Enable (`Colours`) | true | The Colours page of the window. Off: the page is hidden. Needs EnableAll as well |
+| Live Preview (`Colours`) | false | Apply changes instantly while editing (otherwise use Preview) |
+| Split Texture Into Parts (`Colours`) | true | Split a chest's single texture into base / trim parts (off = one part per material) |
+| Default Colour Mode (`Colours`) | Tint | Mode for parts that have no colour yet (`Tint` or `Full`) |
+| Enable (`Attachments`) | true | The Attach items and Position items pages of the window. Off: the pages are hidden (attachments already on chests stay visible). Needs EnableAll as well |
 | Max Attachments Per Chest (`Attachments`) | 5 | How many items one chest can hold (1 - 8) |
 | Free Attachments (`Attachments`) | false | Attaching costs nothing (admins / testing). Items attached while this is on are never refunded later, even after it is turned off. Items that were paid for earlier are still refunded when removed while this is on |
 | Require Known Recipe (`Attachments`) | true | Only things whose recipe / piece you have already unlocked can be attached |
@@ -262,14 +264,14 @@ All settings below can also be changed in game: press the KY hub key (F6 by defa
 | Ignored Ingredients (`Attachments`) | `BattleIdol,ProtectionIdol` | Ingredients left out of every attachment cost (shown, checked, paid, refunded). Some recipes list these only for upgrading the item. Matches prefab / item name, ignoring case and spaces. The idols `Upgrader1Weapon`..`Upgrader7Weapon` and `Upgrader1Armor`..`Upgrader7Armor` are always left out, whatever this says |
 | Include Tree Saplings (`Attachments`) | true | List the small saplings of trees under **Produce** (planted with the tree's seed, cone or acorn). Never the grown tree. Off = no trees listed at all (tree seeds stay listed as seeds). Takes effect immediately |
 | Extra Decorative Prefabs (`Attachments`) | *(empty)* | Comma separated prefab names to also list under **Decor** (ignored unless the prefab has a craft / build recipe) |
-| Free Camera (`Camera`) | true | Allow the camera that circles the chest while the window is open |
+| Enable (`Camera`) | true | Allow the camera that circles the chest while the window is open. Needs EnableAll as well |
 | Camera Max Distance (`Camera`) | 5 | Furthest zoom (m) from the chest; closest is always 1 m (3 - 10) |
 | Camera Speed (`Camera`) | 3 | Keys circle at this x 30 degrees/s and zoom at this many m/s, Shift = 3x (0.5 - 20) |
 | Camera Look Sensitivity (`Camera`) | 0.2 | Degrees circled per pixel of right-mouse drag (0.02 - 1) |
 | EnableAll | true | Switches Chest Decor on / off while playing. Off: no hotkey, hint or window; decorated chests keep their look |
 | Enable (`DebugLog`) | false | Detailed log lines about everything the mod does (for bug reports) |
 
-Every setting applies as soon as it changes (in the config editor or when the file is saved), also in an open window.
+Every setting applies as soon as it changes (in the config editor or when the file is saved), also in an open window. Each part of Chest Decor (Colours, Attachments, Camera) works only when **EnableAll** and its own **Enable** are both on; the window shows the pages of the parts that are on, and the hotkey does nothing when both Colours and Attachments are off.
 
 ### Checking the item list
 The developer option **DumpCatalog** (in the KydlTools dev menu, not in the player config) writes every listed entry (with its categories, cost and where it comes from: which trader

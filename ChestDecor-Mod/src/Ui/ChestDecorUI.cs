@@ -85,6 +85,8 @@ namespace ChestDecor
         {
             if (IsOpen) Close();
             if (KydlCore.KyUi.Root == null) { Toast("Chest Decor: UI is not available yet."); ModLog.Warn("ChestDecorUI: the Core UI root is missing - window not opened"); return; }
+            var pages = Functions.Pages(ModSettings.ColoursOn, ModSettings.AttachmentsOn);     // a switched-off functionality has no page (PROJECT_RULES 11)
+            if (Functions.FirstPage(pages) < 0) { Toast("Chest Decor: colours and attachments are both switched off in the settings."); ModLog.Verbose("ChestDecorUI: no page is on ([Colours] / [Attachments] Enable off) - window not opened"); return; }
 
             // the caller took the chest's editor lock; make sure we still are the one editor
             if (!decor.HoldsLock())
@@ -105,10 +107,10 @@ namespace ChestDecor
                 decor.BeginEdit();
                 IsOpen = true;
 
-                _view = new DecorWindowView(T, ChestName(), Close, OnTab);
-                ColorsPage.Open(decor, _view.Pages[0]);
-                AttachPage.Open(_view.Pages[1]);
-                PositionPage.Open(_view.Pages[2]);
+                _view = new DecorWindowView(T, ChestName(), Close, OnTab, pages);
+                if (pages[0]) ColorsPage.Open(decor, _view.Pages[0]);
+                if (pages[1]) AttachPage.Open(_view.Pages[1]);
+                if (pages[2]) PositionPage.Open(_view.Pages[2]);
                 // Core puts the window on its UI root, holds the one input lock and closes it on Escape (then calls OnWindowClosed)
                 _win = KydlCore.KyUi.Open(Plugin.ModGuid, WindowId, _view.Window, OnWindowClosed);
                 if (_win == null) throw new InvalidOperationException("KyUi.Open refused the window");

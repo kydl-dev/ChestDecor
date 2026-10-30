@@ -1,5 +1,5 @@
-using Kydl.Common;
 using System;
+using Kydl.Common;
 using UnityEngine;
 
 namespace ChestDecor
@@ -62,7 +62,7 @@ namespace ChestDecor
             _looking = false;
             _lastMouse = Input.mousePosition;
 
-            if (_armed && ModSettings.FreeCameraEnabled.Value && !_hintShown)
+            if (_armed && ModSettings.CameraOn && !_hintShown)
             {
                 _hintShown = true;
                 ChestDecorUI.Toast("Camera: WASD / arrows or right mouse to circle the chest, wheel or E / Q to zoom, F to reset");
@@ -118,7 +118,7 @@ namespace ChestDecor
             }
 
             // Off in the config, or an admin is using the game's own free fly: don't interfere.
-            if (!ModSettings.FreeCameraEnabled.Value || GameCamera.InFreeFly())
+            if (!ModSettings.CameraOn || GameCamera.InFreeFly())
             {
                 _engaged = false;
                 _looking = false;

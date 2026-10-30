@@ -19,10 +19,13 @@ namespace ChestDecor
         public static ConfigEntry<bool> RequireAccess;
         public static ConfigEntry<bool> OnlyPlayerBuilt;
         public static ConfigEntry<bool> ShowHoverHint;
+        // [Colours]
+        public static ConfigEntry<bool> ColoursEnable;
         public static ConfigEntry<bool> LivePreview;
         public static ConfigEntry<ColorMode> DefaultMode;
         public static ConfigEntry<bool> SplitParts;
         // [Attachments]
+        public static ConfigEntry<bool> AttachmentsEnable;
         public static ConfigEntry<int> MaxAttachments;
         public static ConfigEntry<bool> FreeAttachments;
         public static ConfigEntry<bool> RequireKnown;
@@ -31,7 +34,7 @@ namespace ChestDecor
         public static ConfigEntry<bool> IncludeTreeSaplings;
         public static ConfigEntry<string> IgnoredIngredientsSetting;
         // [Camera]
-        public static ConfigEntry<bool> FreeCameraEnabled;
+        public static ConfigEntry<bool> FreeCameraEnabled;      // [Camera] Enable
         public static ConfigEntry<float> FreeCameraMaxDistance;
         public static ConfigEntry<float> FreeCameraSpeed;
         public static ConfigEntry<float> FreeCameraLookSpeed;
@@ -40,6 +43,13 @@ namespace ChestDecor
 
         /// Is the mod switched on ([General] EnableAll)? Off = inert: no hotkey, no hint, no window; decorated chests keep their look.
         public static bool On { get { return EnableAll == null || EnableAll.Value; } }
+
+        /// Each functionality works only when EnableAll AND its own Enable are on (PROJECT_RULES 11); off = does nothing, its UI is hidden.
+        public static bool ColoursOn { get { return Functions.IsOn(On, ColoursEnable == null || ColoursEnable.Value); } }
+        public static bool AttachmentsOn { get { return Functions.IsOn(On, AttachmentsEnable == null || AttachmentsEnable.Value); } }
+        public static bool CameraOn { get { return Functions.IsOn(On, FreeCameraEnabled == null || FreeCameraEnabled.Value); } }
+        /// The window has something to show (colours or attachments).
+        public static bool AnyEditorPage { get { return ColoursOn || AttachmentsOn; } }
 
         // --- dev-only values (Tunables; the [Debug] entries of 1.0.0 live here now): KydlTools changes them for testing ------------------------
         public static readonly Tunable<bool> DumpTextures = new Tunable<bool>("Debug", "DumpTextures", false,
@@ -74,15 +84,20 @@ namespace ChestDecor
                 "Only allow decorating chests that players built (not world-generated loot chests).");
             ShowHoverHint = c.Bind("General", "Show Hover Hint", true,
                 "Add a '[key] Decorate chest' line to the chest hover text.");
-            LivePreview = c.Bind("General", "Live Preview", false,
+            ColoursEnable = c.Bind("Colours", "Enable", true,
+                "The Colours page of the decorate window (colour the parts of a chest). Off: the page is hidden. Needs EnableAll to be on as well.");
+            LivePreview = c.Bind("Colours", "Live Preview", false,
                 "Apply colour changes to the chest immediately while editing, instead of only when pressing Preview.");
-            DefaultMode = c.Bind("General", "Default Colour Mode", ColorMode.Tint,
+            DefaultMode = c.Bind("Colours", "Default Colour Mode", ColorMode.Tint,
                 "Colour mode used for parts that have no colour yet. Tint multiplies the chest's existing texture (dark textures stay dark). " +
                 "Full repaints the texture so dark chests change colour too. You can still switch per part in the editor.");
-            SplitParts = c.Bind("General", "Split Texture Into Parts", true,
+            SplitParts = c.Bind("Colours", "Split Texture Into Parts", true,
                 "Most chests use one material and one texture for both wood and metal. When enabled, the texture is analysed and split into two " +
                 "colour regions (base / trim) that can be coloured separately. Disable to colour each material as a single part.");
 
+            AttachmentsEnable = c.Bind("Attachments", "Enable", true,
+                "The Attach items and Position items pages of the decorate window (attach decorations to a chest). Off: the pages are hidden; " +
+                "attachments already on chests stay visible. Needs EnableAll to be on as well.");
             MaxAttachments = c.Bind("Attachments", "Max Attachments Per Chest", 5,
                 new ConfigDescription("How many items can be attached to one chest.", new AcceptableValueRange<int>(1, 8)));
             FreeAttachments = c.Bind("Attachments", "Free Attachments", false,
@@ -105,7 +120,7 @@ namespace ChestDecor
                 "The Battle / Protection Idols (Upgrader1..7Weapon / Armor) are always left out. Matches the prefab or item name, ignoring case, " +
                 "spaces and symbols. Takes effect immediately.");
 
-            FreeCameraEnabled = c.Bind("Camera", "Free Camera", true,
+            FreeCameraEnabled = c.Bind("Camera", "Enable", true,
                 "While the decorate window is open, let the camera circle the chest (WASD / arrows or hold right mouse to circle, mouse wheel " +
                 "or E / Q to zoom, F to go back to the normal camera). Needs no admin rights.");
             FreeCameraMaxDistance = c.Bind("Camera", "Camera Max Distance", 5f,
@@ -119,13 +134,21 @@ namespace ChestDecor
                 "Writes detailed lines about everything the mod does to the BepInEx log (for bug reports). Leave off while playing normally.");
 
             ConfigTools.ApplyCommaFix(c, savedLines);    // after every Bind: "3,5" typed by hand means 3.5, not 35
-            ConfigTools.DropRemoved(c);                  // the 1.0.0 [Debug] entries are Tunables now
+            // settings are grouped by functionality now: the player's values of the old places are kept
+            ConfigMigration.Move(c, "General", "Live Preview", LivePreview);
+            ConfigMigration.Move(c, "General", "Default Colour Mode", DefaultMode);
+            ConfigMigration.Move(c, "General", "Split Texture Into Parts", SplitParts);
+            ConfigMigration.Move(c, "Camera", "Free Camera", FreeCameraEnabled);
+            ConfigTools.DropRemoved(c);                  // the 1.0.0 [Debug] entries are Tunables now, the moved entries are gone from the file
 
             EnableAll.SettingChanged += (s, e) =>
             {
                 ModLog.Info("Config: EnableAll = " + EnableAll.Value + (EnableAll.Value ? ", Chest Decor is on" : ", Chest Decor is inert (no hotkey, hint or window)"));
                 if (!EnableAll.Value) ChestDecorUI.Close();
             };
+            // a functionality switched off while the window is open: close it, it shows the pages again when it is opened next
+            ColoursEnable.SettingChanged += (s, e) => { ModLog.Info("Config: [Colours] Enable = " + ColoursEnable.Value); ChestDecorUI.Close(); };
+            AttachmentsEnable.SettingChanged += (s, e) => { ModLog.Info("Config: [Attachments] Enable = " + AttachmentsEnable.Value); ChestDecorUI.Close(); };
             ShowTestItems.SettingChanged += (s, e) => Plugin.OnCatalogSettingChanged("ShowTestItems");
             ExtraDecorPrefabs.SettingChanged += (s, e) => Plugin.OnCatalogSettingChanged("Extra Decorative Prefabs");
             IncludeTreeSaplings.SettingChanged += (s, e) => Plugin.OnCatalogSettingChanged("Include Tree Saplings");
@@ -136,7 +159,7 @@ namespace ChestDecor
             AttachRowsPerPage.SettingChanged += (s, e) => ChestDecorUI.SettingsChanged("AttachRowsPerPage");
 
             ModLog.Verbose("Config: bound (EnableAll " + EnableAll.Value + ", hotkey " + Hotkey.Value + ", max attachments " + MaxAttachments.Value +
-                           ", free camera " + FreeCameraEnabled.Value + ", debug log " + DebugLog.Value + ")");
+                           ", colours " + ColoursEnable.Value + ", attachments " + AttachmentsEnable.Value + ", camera " + FreeCameraEnabled.Value + ", debug log " + DebugLog.Value + ")");
             return EnableAll != null && Hotkey != null && FreeCameraLookSpeed != null && DebugLog != null;
         }
     }

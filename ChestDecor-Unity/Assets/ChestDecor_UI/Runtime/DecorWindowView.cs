@@ -23,13 +23,18 @@ namespace ChestDecor.Ui
         readonly Func<string, string> _text;
         readonly Action<int> _onTab;
         static readonly string[] TabKeys = { "chestdecor_tab_colors", "chestdecor_tab_attach", "chestdecor_tab_position" };
+        readonly bool[] _shown = { true, true, true };      // which pages exist for the player (a switched-off functionality hides its pages)
         int _tab;
 
         internal int Tab { get { return _tab; } }
 
-        internal DecorWindowView(Func<string, string> text, string chestName, Action onClose, Action<int> onTab)
+        /// `pagesShown`: which of the three pages are offered (null = all). A hidden page gets no tab button and is never chosen.
+        internal DecorWindowView(Func<string, string> text, string chestName, Action onClose, Action<int> onTab, bool[] pagesShown = null)
         {
             _text = text; _onTab = onTab;
+            if (pagesShown != null) for (int i = 0; i < TabCount && i < pagesShown.Length; i++) _shown[i] = pagesShown[i];
+            int first = Array.IndexOf(_shown, true);
+            if (first < 0) first = 0;
             Window = UiKit.Window(text("chestdecor_title"), text("chestdecor_footer"), onClose, out Body);
             Window.name = "chestdecor-window";
 
@@ -49,18 +54,20 @@ namespace ChestDecor.Ui
                 Pages[i] = p;
                 Body.Content.Add(p);
             }
-            ShowTab(0, false);
-            UiLog.Verbose("DecorWindowView: built for '" + chestName + "'");
+            ShowTab(first, false);
+            UiLog.Verbose("DecorWindowView: built for '" + chestName + "', first page " + first);
         }
 
         /// Shows page `tab` (0 colours, 1 attach, 2 position). `notify` calls the game's onTab. Expected outcome: Tab == tab.
         internal bool ShowTab(int tab, bool notify)
         {
             _tab = Mathf.Clamp(tab, 0, TabCount - 1);
+            if (!_shown[_tab]) { int other = Array.IndexOf(_shown, true); if (other >= 0) _tab = other; }   // a hidden page is never chosen
             for (int i = 0; i < TabCount; i++) Pages[i].style.display = i == _tab ? DisplayStyle.Flex : DisplayStyle.None;
             _tabs.Clear();
             for (int i = 0; i < TabCount; i++)
             {
+                if (!_shown[i]) continue;
                 int idx = i;
                 var b = UiControls.Button(_text(TabKeys[i]), () => ShowTab(idx, true), i == _tab);
                 b.style.flexGrow = 1;

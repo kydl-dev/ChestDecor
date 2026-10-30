@@ -7,7 +7,8 @@
 - **Esc** closes the decorate window through KydlCore (only the front window closes when more than one is open).
 - **KY-Items**: the list of items and pieces of other KydlDev mods is read from KydlCore, so a new KydlDev mod with items shows up here without a ChestDecor update.
 - **Position items**: *Tilt*, *Turn*, *Roll* and *Size* now have the same clickable dots as the directions, one every 12.5% of the slider (nine dots; before they had three).
-- Settings, saved chests and the config file stay as they were; nothing to do when updating from 1.1.0.
+- **One switch per part**: new `[Colours] Enable`, `[Attachments] Enable` and `[Camera] Enable` (the old *Free Camera* is now `[Camera] Enable`). A part works only while `[General] EnableAll` and its own switch are on; a switched-off part has no page in the window. *Live Preview*, *Default Colour Mode* and *Split Texture Into Parts* moved from `[General]` to `[Colours]`; your values are kept.
+- Saved chests stay as they were; nothing to do when updating from 1.1.0.
 
 ## 1.1.0
 
