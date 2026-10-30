@@ -179,7 +179,7 @@ namespace ChestDecor
 
             var dist = Vector3.Distance(Player.m_localPlayer.transform.position, _decor.transform.position);
             float max = ModSettings.MaxWindowDistance.Value;
-            if (Time.unscaledTime >= _nextDistanceLog) { _nextDistanceLog = Time.unscaledTime + 5f; ModLog.Verbose("ChestDecorUI: open, player " + dist.ToString("0.0") + " m from the chest (closes beyond " + max + " m), free camera " + (FreeCamera.IsArmed ? "armed" : "off")); }
+            if (Time.unscaledTime >= _nextDistanceLog) { _nextDistanceLog = Time.unscaledTime + 5f; ModLog.Verbose("ChestDecorUI: open, player " + dist.ToString("0.0") + " m from the chest (closes beyond " + max + " m), free camera " + (ModSettings.CameraOn ? (FreeCamera.IsArmed ? "armed" : "off") : "disabled in the config")); }
             if (dist > max) { ModLog.Verbose("ChestDecorUI: player walked away (" + dist.ToString("0.0") + " m > " + max + " m) - closing"); Close(); return; }
 
             // keep the editor lock alive; if somebody else took the chest over, this window must go
