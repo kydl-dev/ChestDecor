@@ -1,0 +1,40 @@
+{
+  "name": "ChestDecor",
+  "description": "ChestDecor: decorator, colours, attachments, edit lock, relog, ownership, editor window (KydlCore D-084)",
+  "requireMods": [
+    {
+      "guid": "com.kydldev.chestdecor"
+    }
+  ],
+  "configOverrides": [
+    {
+      "guid": "com.kydldev.chestdecor",
+      "section": "Colours",
+      "key": "Enable",
+      "value": true
+    },
+    {
+      "guid": "com.kydldev.chestdecor",
+      "section": "Attachments",
+      "key": "Enable",
+      "value": true
+    },
+    {
+      "guid": "com.kydldev.chestdecor",
+      "section": "Camera",
+      "key": "Enable",
+      "value": true
+    }
+  ],
+  "resetBetweenTests": true,
+  "tests": [
+    "selftest",
+    "chest-gets-decorator",
+    "colours-save-and-read",
+    "attachments-save-and-read",
+    "edit-lock",
+    "decoration-survives-relog",
+    "other-player-takes-ownership",
+    "editor-window-opens"
+  ]
+}

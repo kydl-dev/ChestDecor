@@ -1,0 +1,63 @@
+{
+    "name":  "editor-window-opens",
+    "description":  "The editor window opens for a chest (KyUi window, tabs shown) and closes again; the decorate KEY itself is a manual check (TestLab cannot fake KeyCode input)",
+    "timeout":  60,
+    "steps":  [
+                  {
+                      "do":  "spawn",
+                      "prefab":  "piece_chest_wood",
+                      "dz":  3,
+                      "owner":  "me",
+                      "as":  "chest"
+                  },
+                  {
+                      "do":  "wait",
+                      "seconds":  1
+                  },
+                  {
+                      "do":  "hook",
+                      "name":  "chestdecor.editorOpen",
+                      "expect":  false,
+                      "label":  "closed at the start"
+                  },
+                  {
+                      "do":  "hook",
+                      "name":  "chestdecor.openEditor",
+                      "args":  {
+                                   "chest":  "chest"
+                               },
+                      "expect":  true,
+                      "label":  "Open() shows the window"
+                  },
+                  {
+                      "do":  "wait",
+                      "seconds":  1
+                  },
+                  {
+                      "do":  "check",
+                      "check":  "uiVisible",
+                      "text":  "Colours",
+                      "label":  "the Colours tab is shown"
+                  },
+                  {
+                      "do":  "hook",
+                      "name":  "chestdecor.closeEditor"
+                  },
+                  {
+                      "do":  "wait",
+                      "seconds":  1
+                  },
+                  {
+                      "do":  "hook",
+                      "name":  "chestdecor.editorOpen",
+                      "expect":  false,
+                      "label":  "closed again"
+                  }
+              ],
+    "asserts":  [
+                    {
+                        "check":  "noErrors",
+                        "source":  "ChestDecor"
+                    }
+                ]
+}

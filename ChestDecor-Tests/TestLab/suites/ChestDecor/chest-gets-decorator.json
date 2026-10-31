@@ -1,0 +1,41 @@
+{
+  "name": "chest-gets-decorator",
+  "description": "A chest built by the player gets a decorator with colour parts and can be decorated",
+  "timeout": 60,
+  "steps": [
+    {
+      "do": "spawn",
+      "prefab": "piece_chest_wood",
+      "dz": 3,
+      "owner": "me",
+      "as": "chest"
+    },
+    {
+      "do": "wait",
+      "seconds": 1
+    },
+    {
+      "do": "hook",
+      "name": "chestdecor.slotCount",
+      "args": {
+        "chest": "chest"
+      },
+      "min": 1,
+      "label": "colour parts found"
+    },
+    {
+      "do": "hook",
+      "name": "chestdecor.canBeDecorated",
+      "args": {
+        "chest": "chest"
+      },
+      "expect": true
+    }
+  ],
+  "asserts": [
+    {
+      "check": "noErrors",
+      "source": "ChestDecor"
+    }
+  ]
+}

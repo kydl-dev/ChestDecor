@@ -1,0 +1,74 @@
+{
+  "name": "other-player-takes-ownership",
+  "description": "A second player takes the chest's network ownership: the decoration data stays",
+  "timeout": 90,
+  "steps": [
+    {
+      "do": "spawn",
+      "prefab": "piece_chest_wood",
+      "dz": 3,
+      "owner": "me",
+      "as": "chest"
+    },
+    {
+      "do": "wait",
+      "seconds": 1
+    },
+    {
+      "do": "hook",
+      "name": "chestdecor.paint",
+      "args": {
+        "chest": "chest",
+        "hex": "AA5500"
+      },
+      "min": 1
+    },
+    {
+      "do": "hook",
+      "name": "chestdecor.attach",
+      "args": {
+        "chest": "chest",
+        "prefab": "TrophyDeer"
+      },
+      "expect": 1
+    },
+    {
+      "do": "peerJoin"
+    },
+    {
+      "do": "peerOwn",
+      "target": "chest"
+    },
+    {
+      "do": "wait",
+      "seconds": 2
+    },
+    {
+      "do": "hook",
+      "name": "chestdecor.savedHex",
+      "args": {
+        "chest": "chest"
+      },
+      "expect": "AA5500",
+      "label": "colour kept"
+    },
+    {
+      "do": "hook",
+      "name": "chestdecor.attachCount",
+      "args": {
+        "chest": "chest"
+      },
+      "expect": 1,
+      "label": "attachment kept"
+    },
+    {
+      "do": "peerLeave"
+    }
+  ],
+  "asserts": [
+    {
+      "check": "noErrors",
+      "source": "ChestDecor"
+    }
+  ]
+}

@@ -1,0 +1,73 @@
+{
+  "name": "decoration-survives-relog",
+  "description": "Colours and attachments are still on the chest after logging out and back in",
+  "timeout": 240,
+  "steps": [
+    {
+      "do": "spawn",
+      "prefab": "piece_chest_wood",
+      "dz": 3,
+      "owner": "me",
+      "as": "chest"
+    },
+    {
+      "do": "wait",
+      "seconds": 1
+    },
+    {
+      "do": "hook",
+      "name": "chestdecor.paint",
+      "args": {
+        "chest": "chest",
+        "hex": "00FF00"
+      },
+      "min": 1
+    },
+    {
+      "do": "hook",
+      "name": "chestdecor.attach",
+      "args": {
+        "chest": "chest",
+        "prefab": "TrophyDeer"
+      },
+      "expect": 1
+    },
+    {
+      "do": "relog",
+      "timeout": 120
+    },
+    {
+      "do": "wait",
+      "seconds": 3
+    },
+    {
+      "do": "hook",
+      "name": "chestdecor.nearestChest",
+      "as": "chest"
+    },
+    {
+      "do": "hook",
+      "name": "chestdecor.savedHex",
+      "args": {
+        "chest": "chest"
+      },
+      "expect": "00FF00",
+      "label": "colour kept"
+    },
+    {
+      "do": "hook",
+      "name": "chestdecor.attachCount",
+      "args": {
+        "chest": "chest"
+      },
+      "expect": 1,
+      "label": "attachment kept"
+    }
+  ],
+  "asserts": [
+    {
+      "check": "noErrors",
+      "source": "ChestDecor"
+    }
+  ]
+}
